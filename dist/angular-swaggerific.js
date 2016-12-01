@@ -72,7 +72,7 @@
             var self = this;
 
             var scheme = util.contains('https', _json.schemes) ? 'https://' : 'http://';
-            self.host = scheme + _json.host + (_json.basePath ? _json.basePath : "");
+            self.host = scheme + _json.host + _json.basePath;
 
             angular.forEach(_json.paths, function(value, key) {
                 angular.forEach(value, function(innerValue, innerKey) {
@@ -110,11 +110,10 @@
                     }
 
                     (self.api[namespace])[innerValue.operationId] = function(data, config) {
-                        return self.trigger(key, innerKey, data, config);
+                        return self.trigger(key, innerKey, data, config, innerValue);
                     };
                 });
             });
-
             return self.api;
         }
 
@@ -124,30 +123,53 @@
          * @param {String} method
          * @param {Object} data
          * @param {Object} [config]
+         * @param {Object} jsonObject
          * @returns {Promise} - Returns a promise from $http which can be chained to by user.
          */
-        AngularSwaggerific.prototype.trigger = function(path, method, data, config) {
+        AngularSwaggerific.prototype.trigger = function(path, method, data, config, jsonObject) {
             var self = this;
-
-            var getParams, postData;
-            if (angular.lowercase(method) === 'get') {
-                getParams = data || {};
-            } else {
-                postData = data || {};
-            }
+            var data = data || {};
             var config = config || {};
-            var newPath = util.replaceInPath(path, data);
+            var swaggerPath = path;
+            var jsonObject = jsonObject;
 
+            var path = {};
+            var query = "";
+            var body = {};
+
+            var urlEncoded = self.host;
+
+            /*
+            *  Checks parameters' location
+            * */
+            for(var value in jsonObject.parameters) {
+
+                switch (jsonObject.parameters[value].in) {
+                    case "path":
+                        path[jsonObject.parameters[value].name] = data[jsonObject.parameters[value].name];
+                        break;
+
+                    case "query":
+                        query += (query || query === '' ? "?" : "&") + jsonObject.parameters[value].name + "=" + data[jsonObject.parameters[value].name];
+                        break;
+
+                    case "body":
+                    case "form":
+                        body[jsonObject.parameters[value].name] = data[jsonObject.parameters[value].name];
+                        break;
+                }
+            }
+
+            var newPath = util.replaceInPath(swaggerPath, path);
+            urlEncoded += newPath + query;
             var httpConfig = angular.extend({
                 method: method,
-                url: self.host + newPath,
-				data: postData,
-				params: getParams
+                url: urlEncoded,
+                data: body
             }, config);
 
             return $http(httpConfig);
         }
-
         return AngularSwaggerific;
     }
 
