@@ -134,7 +134,7 @@
             var jsonObject = jsonObject;
 
             var path = {};
-            var query = "";
+            var query = {};
             var body = {};
 
             var urlEncoded = self.host;
@@ -150,7 +150,7 @@
                         break;
 
                     case "query":
-                        query += (query || query === '' ? "?" : "&") + jsonObject.parameters[value].name + "=" + data[jsonObject.parameters[value].name];
+                        query[jsonObject.parameters[value].name] = data[jsonObject.parameters[value].name];
                         break;
 
                     case "body":
@@ -160,12 +160,13 @@
                 }
             }
 
-            var newPath = util.replaceInPath(swaggerPath, path);
-            urlEncoded += newPath + query;
+            urlEncoded += util.replaceInPath(swaggerPath, path);
+
             var httpConfig = angular.extend({
                 method: method,
                 url: urlEncoded,
-                data: body
+                data: body,
+                params: query
             }, config);
 
             return $http(httpConfig);

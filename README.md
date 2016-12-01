@@ -1,19 +1,16 @@
-# angular-swaggerific
+# Angular-Swaggerific
 A promise-based service which allows you to easily interact with API endpoints that have been created using [Swagger](http://swagger.io/).
+AngularSwaggerific works with Swagger 2.0 projects
 
 ## Quick Start
 
-+ Install angular-swaggerific with [Bower](http://www.bower.io)
++ Download angular-swaggerific from this GitHub Repository (using Download Button)
 
-```
-$ bower install angular-swaggerific --save
-```
-
-+ Include the required libraries in your `index.html`: 
++ Include the required libraries in your `index.html`:
 
 ```html
 <script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-swaggerific/angular-swaggerific.min.js"></script>
+<script src="angular-swaggerific/angular-swaggerific.min.js"></script>
 ```
 
 + Inject the `angular-swaggerific` module into your app:
@@ -29,21 +26,19 @@ angular
   .module('my-app', ['angular-swaggerific'])
   .run(function($rootScope, $log, $window, AngularSwaggerific) {
     /**
-    * Note that 'swaggerJson' refers to the generated JSON from your Swagger API. 
+    * Note that 'swaggerJson' refers to the generated JSON from your Swagger API.
     * Visit editor.swagger.io to import your API and generate your JSON file.
-    */ 
+    */
     var mySwaggerAPI = new AngularSwaggerific($window.swaggerJson);
 
     MySwaggerAPI.{namespace}.{operationId}({"id": 1})
-      .then(function(data) { 
+      .then(function(data) {
         $log.log("Success! " + data);
       }, function(err) {
         $log.log("Error! " + err);
     });
-  }); 
+  });
 ```
-
-For a more detailed documentation, please visit the [Angular Swaggerific Docs](http://traderev.github.io/angular-swaggerific).
 
 ## License
 
@@ -70,5 +65,3 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
-
-
