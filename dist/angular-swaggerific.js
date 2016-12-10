@@ -155,7 +155,7 @@
 
                     case "body":
                     case "form":
-                        body[jsonObject.parameters[value].name] = data[jsonObject.parameters[value].name];
+                        body = data[jsonObject.parameters[value].name];
                         break;
                 }
             }
@@ -170,7 +170,7 @@
             }, config);
 
             return $http(httpConfig);
-        }
+        };
         return AngularSwaggerific;
     }
 
